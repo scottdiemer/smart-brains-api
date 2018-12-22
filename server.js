@@ -1,10 +1,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt-nodejs')
+const cors = require('cors')
 
 const app = express()
 
 app.use(bodyParser.json())
+app.use(cors())
 
 const database = {
   users: [{
@@ -36,16 +38,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/signin', (req, res) => {
-
-  // Load hash from your password DB.
-  bcrypt.compare('apples', '$2a$10$Z.yd0mO8seCIvMnF5YjoU.Y9TOPdzFEEtg3JkbEe9lOoLhnoH22FW', function(err, res) {
-    console.log('first guess', res)
-  })
-
-  bcrypt.compare("veggies", '$2a$10$Z.yd0mO8seCIvMnF5YjoU.Y9TOPdzFEEtg3JkbEe9lOoLhnoH22FW', function(err, res) {
-    console.log('second guess', res)
-  })
-
   if (req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password) {
     res.json('success')
@@ -109,6 +101,16 @@ app.put('/image', (req, res) => {
 //   // Store hash in your password DB.
 //   console.log(hash)
 // })
+//
+// // Load hash from your password DB.
+// bcrypt.compare('apples', '$2a$10$Z.yd0mO8seCIvMnF5YjoU.Y9TOPdzFEEtg3JkbEe9lOoLhnoH22FW', function(err, res) {
+//   console.log('first guess', res)
+// })
+//
+// bcrypt.compare("veggies", '$2a$10$Z.yd0mO8seCIvMnF5YjoU.Y9TOPdzFEEtg3JkbEe9lOoLhnoH22FW', function(err, res) {
+//   console.log('second guess', res)
+// })
+
 
 app.listen(3000, () => {
   console.log('app is running on port 3000')
