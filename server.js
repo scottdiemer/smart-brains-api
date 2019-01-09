@@ -81,36 +81,27 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/profile/:id', (req, res) => {
-  const {
-    id
-  } = req.params
-  let found = false
-  database.users.forEach(user => {
-    if (user.id === id) {
-      found = true
-      return res.json(user)
-    }
+  const {id} = req.params
+  db.select('*').from('users').where({id})
+    .then(user => {
+      if(user.length) {
+        res.json(user[0])
+      } else {
+        res.status(400).json('not found') 
+      } 
   })
-  if (!found) {
-    res.status(400).json('not found')
-  }
+    .catch(err => res.status(400).json('error getting user'))
 })
 
 app.put('/image', (req, res) => {
-  const {
-    id
-  } = req.body
-  let found = false
-  database.users.forEach(user => {
-    if (user.id === id) {
-      found = true
-      user.entries++
-        return res.json(user.entries)
-    }
-  })
-  if (!found) {
-    res.status(400).json('not found')
-  }
+  const {id} = req.body
+  db('users').where('id', '=', id)
+    .increment('entries', 1)
+    .returning('entries')
+    .then(entries => {
+      res.json(entries[0])
+    })
+    .catch(err => res.status(400).json('unable to get entries'))
 })
 
 // bcrypt.hash(password, null, null, function(err, hash) {
